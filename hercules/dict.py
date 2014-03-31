@@ -1,3 +1,8 @@
+import functools
+
+from hercules.loop_interface import IteratorWrapperBase
+
+
 class KeyClobberError(KeyError):
     pass
 
@@ -96,3 +101,71 @@ def iterdict_filter(f):
         result = f(*args, **kwargs)
         return IteratorDictFilter(result)
     return wrapped
+
+
+
+class DictSetDefault:
+    '''Context manager like getattr, but yields a default value,
+    and sets on the instance on exit:
+
+    with DictSetDefault(somedict, key, []) as attr:
+        attr.append('something')
+    print obj['something']
+    '''
+    def __init__(self, obj, key, default_val):
+        self.obj = obj
+        self.key = key
+        self.default_val = default_val
+
+    def __enter__(self):
+        val = self.obj.get(self.key, self.default_val)
+        self.val = val
+        return val
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.obj[self.key] = self.val
+
+
+class DictSetTemporary:
+    def __init__(self, dicty):
+        self.dicty = dicty
+        self.backup = {}
+        self.remove = set()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        '''Restore the mutated items to the previous state.
+        '''
+        dicty = self.dicty
+        for key, value in self.backup.items():
+            dicty[key] = value
+        for key in self.remove:
+            dicty.pop(key)
+
+    def __setitem__(self, key, value):
+        if key in self.dicty:
+            self.backup[key] = self.dicty.pop(key)
+        else:
+            self.remove.add(key)
+        self.dicty[key] = value
+
+    def __getitem__(self, key):
+        return self.dicty[key]
+
+    def __delitem__(self, key):
+        self.backup[key] = self.dicty.pop(key)
+
+    def update(self, dicty=None, **kwargs):
+        for dicty in (dicty or {}, kwargs):
+            for key, value in dicty.items():
+                if key in self.dicty:
+                    self.backup[key] = self.dicty.pop(key)
+                else:
+                    self.remove.add(key)
+                self.dicty[key] = value
+
+    def get(self, key, default=None):
+        return self.dicty.get(key, default)
+

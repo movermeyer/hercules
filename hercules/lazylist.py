@@ -4,7 +4,6 @@ of values generated lazily. One can also create recursively defined lazy lists
 that generate their values based on ones previously generated.
 
 Backport to python 2.5 by Michael Pust
-http://code.activestate.com/recipes/576429/history/1/
 """
 import itertools
 
@@ -115,29 +114,30 @@ def lazylist(gen):
     """
     return RecursiveLazyListFactory(gen)
 
-#two examples
-if __name__ == '__main__':
-    #fibonnacci sequence in a lazy list.
-    @lazylist
-    def fibgen(lst):
-        yield 0
-        yield 1
-        for a, b in itertools.izip(lst, lst[1:]):
-            yield a + b
 
-    fibs = fibgen() #now fibs can be indexed or iterated over as if it were
-                    #an infinitely long list containing the fibonnaci sequence
+# #two examples
+# if __name__ == '__main__':
+#     #fibonnacci sequence in a lazy list.
+#     @lazylist
+#     def fibgen(lst):
+#         yield 0
+#         yield 1
+#         for a, b in itertools.izip(lst, lst[1:]):
+#             yield a + b
 
-    #prime numbers in a lazy list.
-    @lazylist
-    def primegen(lst):
-        yield 2
-        for candidate in itertools.count(3): #start at next number after 2
-            #if candidate is not divisible by any smaller prime numbers,
-            #it is a prime.
-            if all(candidate % p for p in lst.computed()):
-                yield candidate
-    primes = primegen() #same for primes- treat it like an infinitely long list
-                        #containing all prime numbers.
-    print fibs[0], fibs[1], fibs[2], primes[0], primes[1], primes[2]
-    print list(fibs[:10]), list(primes[:10])
+#     fibs = fibgen() #now fibs can be indexed or iterated over as if it were
+#                     #an infinitely long list containing the fibonnaci sequence
+
+#     #prime numbers in a lazy list.
+#     @lazylist
+#     def primegen(lst):
+#         yield 2
+#         for candidate in itertools.count(3): #start at next number after 2
+#             #if candidate is not divisible by any smaller prime numbers,
+#             #it is a prime.
+#             if all(candidate % p for p in lst.computed()):
+#                 yield candidate
+#     primes = primegen() #same for primes- treat it like an infinitely long list
+#                         #containing all prime numbers.
+#     print fibs[0], fibs[1], fibs[2], primes[0], primes[1], primes[2]
+#     print list(fibs[:10]), list(primes[:10])

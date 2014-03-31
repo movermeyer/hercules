@@ -37,14 +37,17 @@ class CachedClassAttr(object):
         return result
 
 
-def memoize_methodcalls(func, dumps=pickle.dumps):
+def memoize_methodcalls(func, pickle=False, dumps=pickle.dumps):
     '''Cache the results of the function for each input it gets called with.
     '''
     cache = func._memoize_cache = {}
     @functools.wraps(func)
     def memoizer(self, *args, **kwargs):
-        key = dumps((args, kwargs))
-        if args not in cache:
-            cache[args] = func(self, *args, **kwargs)
-        return cache[args]
+        if pickle:
+            key = dumps((args, kwargs))
+        else:
+            key = args
+        if key not in cache:
+            cache[key] = func(self, *args, **kwargs)
+        return cache[key]
     return memoizer
