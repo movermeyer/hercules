@@ -89,7 +89,7 @@ class LazyList(object):
 
         for ind in ind_range:
             try:
-                self._data.append(self._iterator.next())
+                self._data.append(next(self._iterator))
             except StopIteration: #iterator is fully exhausted
                 self._exhausted = True
                 break

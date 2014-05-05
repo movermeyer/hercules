@@ -38,3 +38,15 @@ class SetDefault:
     def __exit__(self, exc_type, exc_value, traceback):
         setattr(self.obj, self.attr, self.val)
 
+
+def set_default(obj, attr, default_val):
+    with SetDefault(obj, attr, default_val) as result:
+        return result
+
+
+@contextlib.contextmanager
+def index_error_stopiter():
+    try:
+        yield
+    except IndexError:
+        raise StopIteration()
