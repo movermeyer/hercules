@@ -12,6 +12,7 @@ from hercules.dict import (
     NoClobberDict, KeyClobberError,
     iterdict_filter, DictFilterMixin,
     DictSetTemporary, DictSetDefault,
+    IteratorDictFilter,
     )
 
 from hercules.lazylist import LazyList
