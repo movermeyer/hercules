@@ -36,6 +36,8 @@ class SetDefault:
                 val = self.default_val()
             else:
                 val = self.default_val
+        else:
+            val = getattr(self.obj, self.attr)
         self.val = val
         return val
 
