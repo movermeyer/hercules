@@ -31,7 +31,11 @@ class SetDefault:
         self.default_val = default_val
 
     def __enter__(self):
-        val = getattr(self.obj, self.attr, self.default_val)
+        if not hasattr(self.obj, self.attr):
+            if callable(self.default_val):
+                val = self.default_val()
+            else:
+                val = self.default_val
         self.val = val
         return val
 
