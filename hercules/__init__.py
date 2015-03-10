@@ -18,3 +18,4 @@ from hercules.dict import (
 from hercules.lazylist import LazyList
 from hercules.stream import Stream
 from hercules.tokentype import Token
+from hercules.sorted_collection import SortedCollection
